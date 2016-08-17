@@ -1,0 +1,80 @@
+contract TeamCoin {
+    /* Public variables of the token */
+    string public standard = 'TeamCoin 0.1';
+    string public name = 'TeamCoin';
+    string public symbol = 'TC';
+    uint8 public decimals = 1;
+    uint256 initialCoins = 5;
+    uint public totalMembers = 0;
+
+    // this is the owner/god
+    // it sets/reset the inflation
+    address public god;
+    mapping (address => uint256) public balance; // 
+    Member[] public members;
+    
+    /* This generates a public event on the blockchain that will notify clients */
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event MemberChangeParticipation(string name, string team, bool participation);
+    event MemberAdded(string name, string team);
+    
+    struct Member {
+        address member;
+        bool canParticipate;
+        string name;
+        string team;
+        uint memberSince;
+    }
+    
+    function TeamCoin(string godName) {
+        god = msg.sender;
+        membership(msg.sender, true, godName, 'Gods');      // make owner a member 
+        msg.sender.send(msg.value);                         // Send back any ether sent accidentally        
+    }
+
+    modifier isGod {
+        if (msg.sender != god) throw;
+        _
+    }
+
+    function become_god(address newGod) isGod {
+        god = newGod;
+    }
+
+    function membership(address newMember, bool canParticipate, string name, string team) isGod {
+        if (balance[newMember] != 0) {
+            // member exists, change participation
+            for (uint i; i < members.length; i++) {
+                if (members[i].member == newMember) {
+                    members[i].canParticipate = canParticipate;
+                    MemberChangeParticipation(name, team, canParticipate);
+
+                    return;
+                }
+            }
+        }
+        else {
+            members[members.length++] = Member({member: newMember, canParticipate: canParticipate, name:name, team: team, memberSince: now});
+            balance[newMember] = initialCoins;
+            totalMembers += 1;
+            MemberAdded(name, team);
+        }
+    }
+
+    
+    /* Send coins */
+    function transfer(address _to, uint256 _value) {
+        if (balance[msg.sender] < _value) throw;           // Check if the sender has enough
+        if (balance[_to] + _value < balance[_to]) throw; // Check for overflows
+        balance[msg.sender] -= _value;                     // Subtract from the sender
+        balance[_to] += _value;                            // Add the same to the recipient
+        Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
+    }
+
+   
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () {
+        throw;     // Prevents accidental sending of ether
+    }
+}
+  

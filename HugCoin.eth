@@ -1,0 +1,69 @@
+/*
+  Sometimes you want to hug someone but there is noone around. How sad!
+  NO MORE! 
+
+  HugCoin, is a futuristic way to say, I am there for you. Or just an experimentation 
+  with Ethereum. Whatever rocks your boat.
+
+  Everybody has an infinite amount of HugCoins to give 
+  *and* 
+  whenever you receive a hug, you are getting added FOREVER in the blockchain.
+
+  Read more about this and how you can use and see all the name here:
+  http://jon.io/hugcoin.html
+
+  Jon V
+ */
+
+contract HugCoin {
+    
+    string public standard = 'HugCoin 0.1';
+    string public name = 'HugCoin';
+    string public symbol = '<3';
+    uint8 public decimals = 2;
+    
+    uint8 constant public a_hug = 1;
+    uint public totalHuggers = 0;
+
+    mapping (address => uint256) public hugs; 
+    Member[] public hugged;
+    
+    /* This generates a public event on the blockchain that will notify clients */
+    event GaveHug(address indexed from, address indexed to, uint256 value);
+    
+    struct Member {
+        address member;
+        string name;
+        uint memberSince;
+    }
+    
+    function HugCoin() {
+        // The first hug, goes to me!
+        giveHugTo("Jon V", msg.sender);
+        
+        msg.sender.send(msg.value);                         
+    }
+
+    
+    /* Send hugs */
+    function giveHugTo(string receipient_name, address _to) {
+        if (hugs[_to] == 0) {
+            // new hugger! 
+            hugged[hugged.length++] = Member({member: _to, name:receipient_name, memberSince: now});
+            hugs[_to] = a_hug;
+            totalHuggers += 1;
+        }
+        else {
+            hugs[_to] += 1;
+        }
+        
+        GaveHug(msg.sender, _to, 1);
+    }
+
+   
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () {
+        throw;     // Prevents accidental sending of ether
+    }
+}
+  
