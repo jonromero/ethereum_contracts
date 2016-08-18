@@ -9,44 +9,63 @@
   *and* 
   whenever you receive a hug, you are getting added FOREVER in the blockchain.
 
-  Read more about this and how you can use and see all the name here:
+  Read more about this and how you can use:
   http://jon.io/hugcoin.html
+
+  HugCoin is implemented as an ERC20 compatible token. Additional methods are provided so you  can hug someone and add his/her name on the blockchain. 
 
   Jon V
  */
 
 contract HugCoin {
     
-    string standard = 'HugCoin 0.1';
     string public name = 'HugCoin';
+    string standard = 'HugCoin 0.2';
     string symbol = '<3';
     uint8 decimals = 0;
+    address owner;
     
     uint8 constant a_hug = 1;
     uint public totalHuggers = 0;
 
-    mapping (address => uint256) public balanceOf; 
     Member[] public hugged;
+    mapping (address => uint256) public balanceOf; 
     
     /* This generates a public event on the blockchain that will notify clients */
-    event GaveHug(address indexed from, address indexed to, uint256 value);
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
     
     struct Member {
         address member;
         string name;
         uint memberSince;
     }
-    
+
+    modifier isOwner {
+        if (msg.sender != owner) throw;
+        _
+    }
+        
     function HugCoin() {
+        owner = msg.sender;
+        
         // The first hug, goes to me!
         giveHugTo("Jon V", msg.sender);
-        
         msg.sender.send(msg.value);                         
     }
 
-    
+    // ERC20 compatible token
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+        return balanceOf;
+    }
+
+
+    function transfer(address _to, uint256 _value) returns (bool success) {
+        return giveHugTo("Stranger", _to);
+    }
+
+        
     /* Send hugs */
-    function giveHugTo(string receipient_name, address _to) {
+    function giveHugTo(string receipient_name, address _to) return (bool success){
         if (balanceOf[_to] == 0) {
             // new hugger! 
             hugged[hugged.length++] = Member({member: _to, name:receipient_name, memberSince: now});
@@ -57,9 +76,13 @@ contract HugCoin {
             balanceOf[_to] += 1;
         }
         
-        GaveHug(msg.sender, _to, 1);
+        Transfer(msg.sender, _to, 1);
+        return true;
     }
 
+    function destroy() isOwner {
+        suicide(owner);
+    }
    
     /* This unnamed function is called whenever someone tries to send ether to it */
     function () {
