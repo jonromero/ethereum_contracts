@@ -17,15 +17,15 @@
 
 contract HugCoin {
     
-    string public standard = 'HugCoin 0.1';
+    string standard = 'HugCoin 0.1';
     string public name = 'HugCoin';
-    string public symbol = '<3';
-    uint8 public decimals = 2;
+    string symbol = '<3';
+    uint8 decimals = 0;
     
-    uint8 constant public a_hug = 1;
+    uint8 constant a_hug = 1;
     uint public totalHuggers = 0;
 
-    mapping (address => uint256) public hugs; 
+    mapping (address => uint256) public balanceOf; 
     Member[] public hugged;
     
     /* This generates a public event on the blockchain that will notify clients */
@@ -47,14 +47,14 @@ contract HugCoin {
     
     /* Send hugs */
     function giveHugTo(string receipient_name, address _to) {
-        if (hugs[_to] == 0) {
+        if (balanceOf[_to] == 0) {
             // new hugger! 
             hugged[hugged.length++] = Member({member: _to, name:receipient_name, memberSince: now});
-            hugs[_to] = a_hug;
+            balanceOf[_to] = a_hug;
             totalHuggers += 1;
         }
         else {
-            hugs[_to] += 1;
+            balanceOf[_to] += 1;
         }
         
         GaveHug(msg.sender, _to, 1);
