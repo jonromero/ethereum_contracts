@@ -21,7 +21,7 @@ contract HugCoin {
     
     string public name = 'HugCoin';
     string standard = 'HugCoin 0.2';
-    string symbol = '<3';
+    string public symbol = '<3';
     uint8 decimals = 0;
     address owner;
     
@@ -53,11 +53,6 @@ contract HugCoin {
         msg.sender.send(msg.value);                         
     }
 
-    // ERC20 compatible token
-    function balanceOf(address _owner) constant returns (uint256 balance) {
-        return balanceOf;
-    }
-
 
     function transfer(address _to, uint256 _value) returns (bool success) {
         return giveHugTo("Stranger", _to);
@@ -65,7 +60,7 @@ contract HugCoin {
 
         
     /* Send hugs */
-    function giveHugTo(string receipient_name, address _to) return (bool success){
+    function giveHugTo(string receipient_name, address _to) returns (bool success){
         if (balanceOf[_to] == 0) {
             // new hugger! 
             hugged[hugged.length++] = Member({member: _to, name:receipient_name, memberSince: now});
@@ -73,10 +68,10 @@ contract HugCoin {
             totalHuggers += 1;
         }
         else {
-            balanceOf[_to] += 1;
+            balanceOf[_to] += a_hug;
         }
         
-        Transfer(msg.sender, _to, 1);
+        Transfer(msg.sender, _to, a_hug);
         return true;
     }
 
