@@ -45,7 +45,8 @@ contract HugCoin {
         _
     }
         
-    function HugCoin() {
+    function HugCoin(string sym) {
+        symbol = sym;
         owner = msg.sender;
         
         // The first hug, goes to me!
@@ -55,7 +56,12 @@ contract HugCoin {
 
 
     function transfer(address _to, uint256 _value) returns (bool success) {
-        return giveHugTo("Stranger", _to);
+        balanceOf[_to] += a_hug;
+        totalHuggers += 1;
+
+        Transfer(msg.sender, _to, a_hug);
+        
+        return true;
     }
 
         
