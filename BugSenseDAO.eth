@@ -1,0 +1,73 @@
+// IN PROGRESS
+contract BugSense {
+
+    string public standard = 'BugSense 0.1';
+    string public name = 'BugSense';
+    string public symbol = 'BS';
+    uint8 public decimals = 1;
+    uint256 initialCoins = 5;
+    uint public totalMembers = 0;
+
+    address owner;
+    mapping (address => uint256) public balance; // 
+    Member[] public members;
+    
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event MemberChangeParticipation(string name, string team, bool participation);
+    event MemberAdded(string name, string team);
+    
+    struct Member {
+        address member;
+        bool canParticipate;
+        uint memberSince;
+    }
+    
+    function TeamCoin(string godName) {
+        owner = msg.sender;
+        membership(ownr, true);
+        msg.sender.send(msg.value);                // Send back any ether sent accidentally        
+    }
+
+    modifier isOwner {
+        if (msg.sender != owner) throw;
+        _
+    }
+
+
+    function membership(address newMember, bool canParticipate, string name) isOwner {
+        if (balance[newMember] != 0) {
+            // member exists, change participation
+            for (uint i; i < members.length; i++) {
+                if (members[i].member == newMember) {
+                    members[i].canParticipate = canParticipate;
+                    MemberChangeParticipation(name, team, canParticipate);
+
+                    return;
+                }
+            }
+        }
+        else {
+            members[members.length++] = Member({member: newMember, canParticipate: canParticipate, memberSince: now});
+            balance[newMember] = initialCoins;
+            totalMembers += 1;
+            MemberAdded(name, team);
+        }
+    }
+
+    
+    /* Send coins */
+    function transfer(address _to, uint256 _value) {
+        if (balance[msg.sender] < _value) throw;           // Check if the sender has enough
+        if (balance[_to] + _value < balance[_to]) throw; // Check for overflows
+        balance[msg.sender] -= _value;                     // Subtract from the sender
+        balance[_to] += _value;                            // Add the same to the recipient
+        Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
+    }
+
+   
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () {
+        throw;     // Prevents accidental sending of ether
+    }
+}
+  
