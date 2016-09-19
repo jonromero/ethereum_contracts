@@ -71,11 +71,8 @@ contract BugSense {
     }
 
 
-    function getDividents() {
-        // check if the use has gotten his divends for this month
-        // if not give it to him and check when was the last month he took divs
-
-        
+    function sendDividents() {
+        // send to all clients their divs 
     }
     
     // kill the DAO - refund everybody
