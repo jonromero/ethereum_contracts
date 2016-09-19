@@ -22,9 +22,9 @@ contract BugSense {
         uint memberSince;
     }
     
-    function TeamCoin(string godName) {
+    function BugSense() {
         owner = msg.sender;
-        membership(ownr, true);
+        membership(owner, true);
         msg.sender.send(msg.value);                // Send back any ether sent accidentally        
     }
 
@@ -64,9 +64,39 @@ contract BugSense {
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
     }
 
-   
+
+    // executed when a user wants to withdraw his eth
+    function cashOut() {
+
+    }
+
+
+    function getDividents() {
+        // check if the use has gotten his divends for this month
+        // if not give it to him and check when was the last month he took divs
+
+        
+    }
+    
+    // kill the DAO - refund everybody
+    function suicide() {
+
+    }
+
+    
     /* This unnamed function is called whenever someone tries to send ether to it */
     function () {
+
+        // if eth < 100
+        // keep 4%
+        // if eth < 500
+        // keep 2%
+        // if eth > 1000
+        // keep 1%
+
+        // subscribe the user and keep his precentage
+        
+        
         throw;     // Prevents accidental sending of ether
     }
 }
